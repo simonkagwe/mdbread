@@ -1,3 +1,6 @@
+class MDBException(Exception):
+    pass
+
 cdef extern from "glib.h":
     void* g_malloc(int)
     void* g_malloc0(int)
@@ -50,7 +53,7 @@ cdef class MDB(object):
         mdb_init()
         self._handle = mdb_open(path, MDB_NOFLAGS)
         if not mdb_read_catalog(self._handle, MDB_ANY):
-            raise Exception("File is not a valid Access database!")
+            raise MDBException("File is not a valid Access database!")
 
     @property
     def tables(self):
