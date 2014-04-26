@@ -1,5 +1,4 @@
 import pandas
-from collections import namedtuple
 
 cdef extern from "glib.h":
     void* g_malloc(int)
@@ -115,9 +114,8 @@ cdef class Table(object):
         return self._column_names()
 
     def records(self):
-        Row = namedtuple("Row",self.columns)
         for row in self:
-            yield Row(*row)
+            yield dict(zip(self.columns, row))
 
     def __iter__(self):
         mdb_rewind_table(self.tbl)
