@@ -1,5 +1,4 @@
 import pandas
-import time
 from collections import namedtuple
 
 cdef extern from "glib.h":
@@ -46,14 +45,6 @@ cdef extern from "mdbsql.h":
     int mdb_fetch_row(MdbTableDef*)
     void mdb_close(MdbHandle*)
     void mdb_exit()
-
-transformers = {
-    "Long Integer": int,
-    "Single": float,
-    "Boolean": lambda x: bool(int(x)),
-    "Text": str,
-    "DateTime": lambda dt: time.strptime(dt, "%m/%d/%y %H:%M:%S")
-}
 
 cdef class MDB(object):
     cdef MdbHandle* _handle
@@ -145,11 +136,8 @@ cdef class Table(object):
                             self.bound_values[j],
                             &self.bound_lens[j])
 
-        _transformers = [transformers[t] for t in col_types]
         while mdb_fetch_row(self.tbl):
-            row = [_transformers[j](self.bound_values[j]) 
-                   for j in xrange(self.ncol)]
-            yield row
+            yield [self.bound_values[j] for j in xrange(self.ncol)]
 
     def __del__(self):
         for i in xrange(self.ncol):
