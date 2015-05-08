@@ -26,6 +26,7 @@ setup(
     author_email='cory.b.giles@gmail.com',
     url='http://corygil.es/',
     cmdclass={'build_ext': build_ext},
+    install_requires=["cython"],
     ext_modules = [Extension("mdbread", ["mdbread.pyx"], 
                              **pkgconfig("libmdb"))],
     classifiers=[
